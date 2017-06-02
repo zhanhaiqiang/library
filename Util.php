@@ -311,7 +311,35 @@ class Util
         imagedestroy($bg_img);
     }
 
-
+    /**
+     * @curl 获取数据
+     *
+     * @param $url
+     * @param array $data
+     * @param string $method
+     * @return mixed
+     */
+    public static function curlGetData($url, $data = array(), $method = 'get')
+    {
+        $ch = curl_init();
+        // 设置URL和相应的选项
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        if (strtolower($method) != 'get') {
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        }
+        //抓取URL并把它传递给浏览器
+        $out_res = curl_exec($ch);
+        if ($out_res === false) {
+            echo 'CURL Error : '.curl_error($ch);
+        }
+        //关闭cURL资源，并且释放系统资源
+        curl_close($ch);
+        return $out_res;
+    }
 
 
 
