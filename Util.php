@@ -262,8 +262,54 @@ class Util
         }
     }
 
+    /**
+     * @生成验证码
+     *
+     * @param $width
+     * @param $height
+     * @param $frontFile
+     * @param int $codeLength
+     */
+    public static function validateCode($width, $height, $frontFile = '', $codeLength = 4)
+    {
+        $width = $width ? $width : 130;
+        $height = $height ? $height :50;
+        $charset = 'abcdefghkmnprstuvwxyzABCDEFGHKMNPRSTUVWXYZ23456789';//随机因子
+        $create_code = '';
+        //生成随机码
+        for ($i = 0; $i < $codeLength; $i++) {
+            $create_code .= $charset[mt_rand(0, mb_strlen($charset))];
+        }
+        //生成背景
+        $bg_img = imagecreatetruecolor($width, $height);
+        $bg_color = imagecolorallocate($bg_img, mt_rand(130, 200), mt_rand(130, 200), mt_rand(130, 200));
+        imagefilledrectangle($bg_img, 0, 0, $width, $height, $bg_color);
+        //画线
+        for ($i = 0; $i < 8; $i++) {
+            $line_color = imagecolorallocate($bg_img, mt_rand(0, 130), mt_rand(0, 130), mt_rand(0, 130));
+            imageline($bg_img, mt_rand(0, $width), mt_rand(0, $height), mt_rand(0, $width), mt_rand(0, $height), $line_color);
+        }
+        //雪花
+        for ($i = 0; $i < 20; $i++) {
+            $str_color = imagecolorallocate($bg_img, mt_rand(200, 255), mt_rand(200, 255), mt_rand(200, 255));
+            imagestring($bg_img, mt_rand(0, 5), mt_rand(0, $width), mt_rand(0, $height), '*', $str_color);
+        }
+        //生成文字
+        $x = $width / $codeLength;
+        for ($i = 0; $i < $codeLength; $i++) {
+            $front_color = imagecolorallocate($bg_img, mt_rand(0, 255), mt_rand(0, 255), mt_rand(0, 255));
+            if ($frontFile) {
+                imagettftext($bg_img, 20, mt_rand(-30, 30), $x*$i+mt_rand(1, 5), $height/1.4, $str_color, $frontFile, $create_code[$i]);
+            } else {
+                imagechar($bg_img, 5, $x*$i+mt_rand(1, 5), $height/2.3, $create_code[$i], $front_color);
 
-
+            }
+        }
+        //输出验证码
+        header('Content-type: image/png');
+        imagepng($bg_img);
+        imagedestroy($bg_img);
+    }
 
 
 
