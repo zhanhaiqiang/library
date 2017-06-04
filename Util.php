@@ -327,7 +327,7 @@ class Util
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-        if (strtolower($method) == 'post') {
+        if (strtolower(strval($method)) == 'post') {
             curl_setopt($ch, CURLOPT_POST, false);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         }
