@@ -324,11 +324,11 @@ class Util
         $ch = curl_init();
         // 设置URL和相应的选项
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-        if (strtolower($method) != 'get') {
-            curl_setopt($ch, CURLOPT_POST, 1);
+        if (strtolower($method) == 'post') {
+            curl_setopt($ch, CURLOPT_POST, false);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         }
         //抓取URL并把它传递给浏览器
