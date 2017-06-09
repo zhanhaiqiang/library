@@ -341,9 +341,115 @@ class Util
         return $out_res;
     }
 
+    /**
+     * @返回文件扩展名
+     *
+     * @param $file
+     * @return mixed
+     */
+    public static function getFileExt($file)
+    {
+        $file_info = pathinfo($file);
+        return $file_info['extension'];
+    }
 
+    /**
+     * @从文件获取内容
+     *
+     * @param $file
+     * @param bool $lockModel
+     * @return bool|string
+     */
+    public static function getContentsFromFile($file, $lockModel = false)
+    {
+        if (!is_file($file)) return false;
+        clearstatcache();
+        $fp = fopen($file, 'rb');
+        $result = false;
+        $is_read = true;
+        if ($lockModel) {
+            if (!flock($fp, $lockModel)) {
+                echo 'file already locked';
+                $is_read = false;
+            }
+        }
+        if ($is_read) {
+            $result = stream_get_contents($fp);
+            if ($lockModel) flock($fp, LOCK_UN);
+        }
+        fclose($fp);
+        return $result;
+    }
 
+    /**
+     * @写入文件操作
+     *
+     * @param $file
+     * @param $string
+     * @param bool $lockModel
+     * @return bool|int
+     */
+    public static function putContentsInFile($file, $string, $lockModel = false)
+    {
+        if (!is_file($file)) return false;
+        clearstatcache();
+        $fp = fopen($file, 'wb+');
+        $result = false;
+        $is_write = true;
+        if ($lockModel) {
+            if (!flock($fp, LOCK_EX | LOCK_NB)) {
+                echo 'file already locked';
+                $is_write = false;
+            }
+        }
+        if ($is_write) {
+            $string = is_string($string) ? $string : serialize($string) ;
+            $result = fwrite($fp, $string);
+            if ($lockModel) flock($fp, LOCK_UN);
+        }
+        fclose($fp);
+        return $result;
+    }
 
+    /**
+     * @计算两个日期时间差
+     *
+     * @param $date1
+     * @param $date2
+     * @param string $dateType
+     * @return bool|float
+     */
+    public static function dateDiff($date1, $date2, $dateType = 'd')
+    {
+        switch ($dateType)
+        {
+            case 's':
+                $divisor = 1;
+                break;
+            case 'i':
+                $divisor = 60;
+                break;
+            case 'h':
+                $divisor = 3600;
+                break;
+            case 'd':
+                $divisor = 86400;
+                break;
+            case 'm':
+                $divisor = 86400*30;
+                break;
+            case 'y':
+                $divisor = 86400*30*365;
+            default:
+                $divisor = 86400;
+        }
+        $time1 = strtotime($date1);
+        $time2 = strtotime($date2);
+        if ($time1 && $time2) {
+            return (float)($time1 - $time2) / $divisor;
+        }
+        return false;
+    }
 
 
 
