@@ -191,7 +191,7 @@ class Util
     public static function arrayToXml($array)
     {
         $return_xml = '';
-        if ($array) {
+        if (is_array($array) && $array) {
             foreach ($array as $key => $value ) {
                 if (is_array($value)) {
                     $return_xml .= "<$key>";
