@@ -482,10 +482,14 @@ class Util
     public static function sortTree(array $array, $parentColumn)
     {
         if (is_array($array) && $array) {
-            
+            $newArray = array();
+            foreach ($array as $k => $v) {
+                $newArray[$v[$parentColumn]][$v['id']] = $v;
+            }
+            return $newArray;
+        } else {
+            return false;
         }
-
-
     }
 
 
