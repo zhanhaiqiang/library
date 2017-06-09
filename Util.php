@@ -451,7 +451,33 @@ class Util
         return false;
     }
 
-
+    /**
+     * @多维数组按多字段进行排列
+     *
+     * @param array $array
+     * @param $sortColumnArray
+     * @return array|bool
+     */
+    public static function arraySort(array $array, $sortColumnArray)
+    {
+        if (is_array($array) && $array) {
+            $sortColumn = array_keys($sortColumnArray);
+            $sortType = array_values($sortColumnArray);
+            foreach ($array as $k => $v) {
+                foreach ($sortColumn as $sort) {
+                    ${$sort}[] = $v[$sort];
+                }
+            }
+            $finalSortArray = '';
+            foreach ($sortColumn as $item => $value) {
+                $finalSortArray .= '$'.$value.', '.$sortType[$item].',';
+            }
+            eval('array_multisort('.$finalSortArray.'$array);');
+            return $array;
+        } else {
+            return false;
+        }
+    }
 
 
 
