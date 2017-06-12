@@ -479,11 +479,21 @@ class Util
         }
     }
 
-    public static function sortTree(array $array, $parentColumn)
+    /**
+     * @分类树构造
+     *
+     * @param array $array
+     * @param $parentColumn
+     * @param $idColumn
+     * @return array
+     */
+    public static function sortTree(array $array, $parentColumn, $idColumn)
     {
         if (is_array($array) && $array) {
             $pidArray = array_column($array, $parentColumn);
-            $idArray =  array_column($array, 'id');
+            $keyArray = array_keys($array);
+            $idArray =  array_column($array, $idColumn);
+            $idArray = array_combine($keyArray, $idArray);
             $newArray = array();
             foreach ($array as $k => $v) {
                 if (in_array($v[$parentColumn], $idArray)){
@@ -495,7 +505,7 @@ class Util
             }
             return $newArray;
         } else {
-            return false;
+            return array();
         }
     }
 
