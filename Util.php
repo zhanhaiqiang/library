@@ -325,7 +325,7 @@ class Util
         // 设置URL和相应的选项
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
         if (strtolower(strval($method)) == 'post') {
             curl_setopt($ch, CURLOPT_POST, true);
