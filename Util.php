@@ -328,7 +328,7 @@ class Util
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
         if (strtolower(strval($method)) == 'post') {
-            curl_setopt($ch, CURLOPT_POST, false);
+            curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         }
         //抓取URL并把它传递给浏览器
@@ -508,6 +508,26 @@ class Util
             return array();
         }
     }
+
+    public static function checkEmail($emailString = '')
+    {
+        if (is_string($emailString)) {
+            $res = preg_match('/{([\S]+)}/i', $emailString, $match);
+            return $match;
+        } else {
+            return false;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 
