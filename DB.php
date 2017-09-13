@@ -39,7 +39,9 @@ class DB
             try {
                 self::$instance = new PDO($dsn, $db_user, $db_pass);
                 self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                self::$instance->query("SET NAMES 'UTF8'");
+				if (!empty($config['charset'])) {
+					self::$instance->query("SET NAMES ".$config['charset']."");
+				}            
             } catch (PDOException $e) {
                 echo "ERROR: ".$e->getMessage()." <br />";
                 return false;
@@ -106,6 +108,7 @@ class DB
     public static function insert($table, $params = array(), $columns = array())
     {
         if (empty($columns)) {
+			//判断是否是多维数组
             if (count($params) == count($params, 1)) {
                 foreach ($params as $col => $val) {
                     $cols[] = $col;
