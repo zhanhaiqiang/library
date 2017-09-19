@@ -177,13 +177,16 @@ class Util
      */
     public static function xmlToArray($xml)
     {
-        if (is_file($xml)) {
+        if (function_exists('libxml_disable_entity_loader')) {
+            libxml_disable_entity_loader(false);
+        }
+		
+        if (is_string($xml) && is_file($xml)) {
             return json_decode(json_encode(simplexml_load_file($xml)), true);
         } else if (is_string($xml)) {
-            //禁止引用外部xml实体
-            libxml_disable_entity_loader(true);
             return json_decode(json_encode(simplexml_load_string($xml)),true);
         }
+        return $xml;
     }
 
     /**
