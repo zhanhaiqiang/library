@@ -87,7 +87,7 @@ class DB
     }
 
     /**
-     * µ¥Ìõ²åÈë | ¶àÌõ²åÈë
+     * å•æ¡æ’å…¥ | å¤šæ¡æ’å…¥
      * @param $table
      * @param array $params
      * @param array $columns
@@ -98,7 +98,7 @@ class DB
         $cols = array();
         $vals = array();
 
-        //ÅÐ¶ÏÊÇ·ñÊÇ¶àÎ¬Êý×é
+        //åˆ¤æ–­æ˜¯å¦æ˜¯å¤šç»´æ•°ç»„
         if (count($params) == count($params, 1)) {
             foreach ($params as $col => $val) {
                 $cols[] = $col;
@@ -112,7 +112,7 @@ class DB
         }
         if ($columns) $cols = $columns;
 
-        //¹¹ÔìsqlÓï¾ä
+        //æž„é€ sqlè¯­å¥
         if (count($params) == count($params, 1)) {
             $sql = "insert into {$table} (" . implode(",", $cols) . ") values (" . implode(",", $vals) . ")";
             $smt = self::$instance->prepare($sql);
@@ -140,7 +140,7 @@ class DB
     }
 
     /**
-     * ÐÞ¸Ä
+     * ä¿®æ”¹
      *
      * @param $sql
      * @param array $params
@@ -152,7 +152,7 @@ class DB
     }
 
     /**
-     * É¾³ý
+     * åˆ é™¤
      *
      * @param $sql
      * @param array $params
