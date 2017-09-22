@@ -11,22 +11,10 @@ class DB
 {
     private static $instance = null;
 
-   /* private function __construct(array $config)
+    private function __construct()
     {
-        $db_host = isset($config['host']) ? $config['host'] : "localhost";
-        $db_name = isset($config['dbname']) ? $config['dbname'] : "default";
-        $db_user = isset($config['username']) ? $config['username'] : "root";
-        $db_pass = isset($config['password']) ? $config['password'] : "";
-        $dsn = "mysql:host={$db_host};dbname={$db_name}";
-        try {
-            parent::__construct($dsn, $db_user, $db_pass);
-            self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            self::$instance->query("SET NAMES 'UTF8'");
-        } catch (PDOException $e) {
-            echo "ERROR: ".$e->getMessage()." <br />";
-            return false;
-        }
-    }*/
+
+    }
 
     public static  function getInstance(array $config)
     {
@@ -107,22 +95,23 @@ class DB
      */
     public static function insert($table, $params = array(), $columns = array())
     {
-        if (empty($columns)) {
-			//判断是否是多维数组
-            if (count($params) == count($params, 1)) {
-                foreach ($params as $col => $val) {
-                    $cols[] = $col;
-                    $vals[] = "?";
-                }
-            } else {
-                foreach ($params[0] as $col => $val) {
-                    $cols[] = $col;
-                    $vals[] = "?";
-                }
+        $cols = array();
+        $vals = array();
+
+        //判断是否是多维数组
+        if (count($params) == count($params, 1)) {
+            foreach ($params as $col => $val) {
+                $cols[] = $col;
+                $vals[] = "?";
             }
         } else {
-            $cols = $columns;
+            foreach ($params[0] as $col => $val) {
+                $cols[] = $col;
+                $vals[] = "?";
+            }
         }
+        if ($columns) $cols = $columns;
+
         //构造sql语句
         if (count($params) == count($params, 1)) {
             $sql = "insert into {$table} (" . implode(",", $cols) . ") values (" . implode(",", $vals) . ")";
