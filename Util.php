@@ -526,8 +526,37 @@ class Util
         }
     }
 
+    /**
+     * @PHP做下载文件处理
+     *
+     * @param $filePath
+     * @throws Exception
+     * return file
+     */
+    public static function fileDownload($filePath)
+    {
+        $file_path = $filePath;
+        $file_name = basename($file_path);
+        if (!file_exists($file_path)) {
+            throw new Exception('file is not exists!');
+        }
 
+        header('Content-type: application/octet-steam');
 
+        //如果文件是中文文件名用户下载后有可能为乱码，此处处理这些问题
+        $ua = $_SERVER['HTTP_USER_AGENT'];
+        $encodes_filename = rawurlencode($file_name);
+        if (preg_match("/MSIE/", $ua)) {
+            header('Content-Disposition: attachment; filename="'. $encodes_filename .'"');
+        } else if (preg_match("/Firefox/", $ua)) {
+            header('Content-Disposition: attachment; filename="'. $file_name .'"');
+        } else {
+            header('Content-Disposition: attachment; filename="'. $file_name .'"');
+        }
+
+        header('Content-Length: '. filesize($file_path));
+        readfile($file_path);
+    }
 
 
 
