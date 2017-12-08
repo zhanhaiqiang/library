@@ -11,13 +11,13 @@ class DB
 {
     private static $instance = null;
 	
-	//ä¸å…è®¸è°ƒç”¨æ„é€ å‡½æ•°
+	//²»ÔÊĞíµ÷ÓÃ¹¹Ôìº¯Êı
     private function __construct()
     {
 
     }
 	
-	//ä¸å…è®¸å…‹éš†
+	//²»ÔÊĞí¿ËÂ¡
 	private function __clone()
 	{
 		
@@ -30,7 +30,7 @@ class DB
             $db_name = !empty($config['dbname']) ? $config['dbname'] : "default";
             $db_user = !empty($config['username']) ? $config['username'] : "root";
             $db_pass = !empty($config['password']) ? $config['password'] : "";
-            $dsn = "mysql:host={$db_host};dbname={$db_name}";
+            $dsn     = "mysql:host={$db_host};dbname={$db_name}";
             try {
                 self::$instance = new PDO($dsn, $db_user, $db_pass);
                 self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -54,7 +54,7 @@ class DB
      */
     private static function query($sql, $params = array())
     {
-        $smt = self::$instance->prepare($sql);
+        $smt    = self::$instance->prepare($sql);
         $params = self::makeBindArray($params);
         if (is_array($params) && !empty($params)) {
             foreach ($params as $k => $v) {
@@ -102,7 +102,7 @@ class DB
     }
 
     /**
-     * å•æ¡æ’å…¥ | å¤šæ¡æ’å…¥
+     * µ¥Ìõ²åÈë | ¶àÌõ²åÈë
      * @param $table
      * @param array $params
      * @param array $columns
@@ -113,7 +113,7 @@ class DB
         $cols = array();
         $vals = array();
 
-        //åˆ¤æ–­æ˜¯å¦æ˜¯å¤šç»´æ•°ç»„
+        //ÅĞ¶ÏÊÇ·ñÊÇ¶àÎ¬Êı×é
         if (count($params) == count($params, 1)) {
             foreach ($params as $col => $val) {
                 $cols[] = $col;
@@ -127,7 +127,7 @@ class DB
         }
         if ($columns) $cols = $columns;
 
-        //æ„é€ sqlè¯­å¥
+        //¹¹ÔìsqlÓï¾ä
         if (count($params) == count($params, 1)) {
             $sql = "insert into {$table} (" . implode(",", $cols) . ") values (" . implode(",", $vals) . ")";
             $smt = self::$instance->prepare($sql);
@@ -156,7 +156,7 @@ class DB
     }
 
     /**
-     * ä¿®æ”¹
+     * ĞŞ¸Ä
      *
      * @param $sql
      * @param array $params
@@ -168,9 +168,9 @@ class DB
             return false;
         }
         $columnArray = array();
-        $column = array_keys($data);
-        $value = array_values($data);
-        $newColumn = $column;
+        $column      = array_keys($data);
+        $value       = array_values($data);
+        $newColumn   = $column;
         array_walk($newColumn, array('DB', 'addSpecialChar'));
         foreach ($column as $key => $value) {
             $columnArray[$key] = $newColumn[$key] . '=:' . $value;
@@ -187,7 +187,7 @@ class DB
     }
 
     /**
-     * åˆ é™¤
+     * É¾³ı
      *
      * @param $sql
      * @param array $params
@@ -259,7 +259,7 @@ class DB
     }
 
     /**
-     * @ä¸ºå­—æ®µæ’å…¥ç‰¹æ®Šå­—ç¬¦
+     * @Îª×Ö¶Î²åÈëÌØÊâ×Ö·û
      *
      * @param $value
      * @param $key
@@ -283,7 +283,7 @@ class DB
     }
 
     /**
-     * @æ„é€ ç»‘å®šæ•°ç»„
+     * @¹¹Ôì°ó¶¨Êı×é
      *
      * @param array $bindArray
      * @return array|bool
@@ -296,7 +296,7 @@ class DB
         $bindColumn = array_keys($bindArray);
         $bindValue  = array_values($bindArray);
         array_walk($bindColumn, array('DB', 'addSpecialChar'), ':');
-        $bindArray = array_combine($bindColumn, $bindValue);
+        $bindArray  = array_combine($bindColumn, $bindValue);
         return $bindArray;
     }
 
