@@ -10,19 +10,26 @@
 class DB
 {
     private static $instance = null;
-
+	
+	//不允许调用构造函数
     private function __construct()
     {
 
     }
-
+	
+	//不允许克隆
+	private function __clone()
+	{
+		
+	}
+	
     public static  function getInstance(array $config)
     {
         if (!(self::$instance instanceof self)) {
-            $db_host = isset($config['host']) ? $config['host'] : "localhost";
-            $db_name = isset($config['dbname']) ? $config['dbname'] : "default";
-            $db_user = isset($config['username']) ? $config['username'] : "root";
-            $db_pass = isset($config['password']) ? $config['password'] : "";
+            $db_host = !empty($config['host']) ? $config['host'] : "localhost";
+            $db_name = !empty($config['dbname']) ? $config['dbname'] : "default";
+            $db_user = !empty($config['username']) ? $config['username'] : "root";
+            $db_pass = !empty($config['password']) ? $config['password'] : "";
             $dsn = "mysql:host={$db_host};dbname={$db_name}";
             try {
                 self::$instance = new PDO($dsn, $db_user, $db_pass);
@@ -48,6 +55,7 @@ class DB
     private static function query($sql, $params = array())
     {
         $smt = self::$instance->prepare($sql);
+        $params = self::makeBindArray($params);
         if (is_array($params) && !empty($params)) {
             foreach ($params as $k => $v) {
                 $smt->bindValue($k, $v);
@@ -70,7 +78,7 @@ class DB
     }
 
     /**
-     * PDO fetch
+     * PDO fetchRow
      *
      * @param $sql
      * @param array $params
@@ -80,7 +88,14 @@ class DB
     {
         return self::query($sql, $params)->fetch(PDO::FETCH_ASSOC);
     }
-
+	
+	/**
+     * PDO fetchOne
+     *
+     * @param $sql
+     * @param array $params
+     * @return mixed
+     */
     public static function getOne($sql, $params = array())
     {
         return self::query($sql, $params)->fetch(PDO::FETCH_NUM);
@@ -132,9 +147,10 @@ class DB
                 }
                 $i++;
             }
-            unset($i);
             $smt = self::$instance->prepare($sql);
             $smt->execute($in_array);
+            unset($params);
+            unset($in_array);
         }
         return self::$instance->lastinsertId();
     }
@@ -146,9 +162,28 @@ class DB
      * @param array $params
      * @return int
      */
-    public static function update($sql, $params = array())
+    public static function update($tableName, $data = array(), $where = '', $whereParams = array())
     {
-        return self::query($sql, $params)->rowCount();
+        if (empty($data)) {
+            return false;
+        }
+        $columnArray = array();
+        $column = array_keys($data);
+        $value = array_values($data);
+        $newColumn = $column;
+        array_walk($newColumn, array('DB', 'addSpecialChar'));
+        foreach ($column as $key => $value) {
+            $columnArray[$key] = $newColumn[$key] . '=:' . $value;
+        }
+        $columnStr = implode(',', $columnArray);
+        $sql = "update `{$tableName}` set {$columnStr} ";
+        if (!empty($where)) {
+            $sql .= ' where ' . $where;
+            if (is_array($whereParams)) {
+                $data = array_merge($data, $whereParams);
+            }
+        }
+        return self::query($sql, $data)->rowCount();
     }
 
     /**
@@ -158,9 +193,13 @@ class DB
      * @param array $params
      * @return int
      */
-    public static function delete($sql, $params = array())
+    public static function delete($tableName, $where = '', $whereParams = array())
     {
-        return self::query($sql, $params)->rowCount();
+        $sql = "delete from `{$tableName}` ";
+        if (!empty($where)) {
+            $sql .= ' WHERE ' . $where;
+        }
+        return self::query($sql, $whereParams)->rowCount();
     }
 
     /**
@@ -219,5 +258,46 @@ class DB
         }
     }
 
+    /**
+     * @为字段插入特殊字符
+     *
+     * @param $value
+     * @param $key
+     * @param string $specialChar
+     */
+    protected static function addSpecialChar(&$value, $key, $specialChar = '`')
+    {
+        switch ($specialChar)
+        {
+            case '`':
+                if($value !== '*' && strpos($value, '.') === false && strpos($value, '`') === false) {
+                    $value = $specialChar . trim($value) . $specialChar;
+                }
+                break;
+            case ':':
+                if (substr($value, 0, 1) != ':') {
+                    $value = $specialChar . trim($value);
+                }
+                break;
+        }
+    }
+
+    /**
+     * @构造绑定数组
+     *
+     * @param array $bindArray
+     * @return array|bool
+     */
+    protected static function makeBindArray($bindArray = array())
+    {
+        if (empty($bindArray)) {
+           return false;
+        }
+        $bindColumn = array_keys($bindArray);
+        $bindValue  = array_values($bindArray);
+        array_walk($bindColumn, array('DB', 'addSpecialChar'), ':');
+        $bindArray = array_combine($bindColumn, $bindValue);
+        return $bindArray;
+    }
 
 }
