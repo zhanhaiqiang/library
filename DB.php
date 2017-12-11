@@ -38,7 +38,7 @@ class DB
 					self::$instance->query("SET NAMES ".$config['charset']."");
 				}            
             } catch (PDOException $e) {
-                echo "ERROR: ".$e->getMessage()." <br />";
+                echo "ERROR: ".$e->getMessage()." \n";
                 return false;
             }
         }
