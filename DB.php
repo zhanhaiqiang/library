@@ -169,7 +169,6 @@ class DB
         }
         $columnArray = array();
         $column      = array_keys($data);
-        $value       = array_values($data);
         $newColumn   = $column;
         array_walk($newColumn, array('DB', 'addSpecialChar'));
         foreach ($column as $key => $value) {
