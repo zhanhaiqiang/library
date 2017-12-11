@@ -11,17 +11,21 @@ class DB
 {
     private static $instance = null;
 	
-	//不允许调用构造函数
+	/**  不允许调用构造函数  */
     private function __construct()
-    {
+    {}
 
-    }
-	
-	//不允许克隆
-	private function __clone()
-	{
-		
-	}
+    /**  不允许克隆  */
+    private function __clone()
+    {}
+
+    /**  不允许serialize */
+    private function __sleep()
+    {}
+
+    /**  不允许unserialize */
+    private function __wakeup()
+    {}
 	
     public static  function getInstance(array $config)
     {
