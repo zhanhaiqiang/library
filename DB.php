@@ -54,9 +54,9 @@ class DB
      */
     private static function query($sql, $params = array())
     {
-        $smt    = self::$instance->prepare($sql);
-        $params = self::makeBindArray($params);
+        $smt = self::$instance->prepare($sql);
         if (is_array($params) && !empty($params)) {
+            $params = self::makeBindArray($params);
             foreach ($params as $k => $v) {
                 $smt->bindValue($k, $v);
             }
