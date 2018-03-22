@@ -26,7 +26,57 @@ class Util
         $str=substr($str,0,$length);
         return $str.'...';
     }
+	
+	/**
+     * @转换成需要的字符编码格式
+     *
+     * @param string | array $str
+     * @param string $toCharset
+     * @return array|bool|string
+     */
+    public static function transStrCharset($str, $toCharset = 'UTF-8')
+    {
+        $toCharset = strtoupper($toCharset);
+        if (is_array($str)) {
+            array_walk($str, array('self', "changeStrCharset"), $toCharset);
+            return $str;
+        }
+        $encode = strtoupper(mb_detect_encoding($str, array('ASCII', 'UTF-8', 'GB2312', 'GBK', 'EUC-CN')));
+        switch ($encode) {
+            case $toCharset:
+                break;
+            default:
+                $str = self::iconvAll($encode, $toCharset, $str);
+                break;
+        }
+        return $str;
+    }
 
+    /**
+     * @转换字符编码
+     *
+     * @param $value
+     * @param $key
+     * @param string $toCharset
+     * @return array|bool|string
+     */
+    public static function changeStrCharset(&$value, $key, $toCharset = 'UTF-8')
+    {
+        if (is_array($value)) {
+            array_walk($value, array('self', "changeStrCharset"), $toCharset);
+            return $value;
+        }
+        $encode = mb_detect_encoding($value, array('ASCII', 'UTF-8', 'GB2312', 'GBK', 'EUC-CN'));
+        switch ($encode) {
+            case $toCharset:
+                break;
+            default:
+                $value = self::iconvAll($encode, $toCharset, $value);
+                break;
+        }
+        return $value;
+    }
+	
     /**
      * @转化字符编码
      *
