@@ -90,12 +90,12 @@ class Util
         if (!$value) {
             return false;
         }
-        if (is_string($value)) {
-            $value = iconv($from_charset, $to_charset, $value);
-        } else {
-            foreach ($value as $item =>$v) {
+        if (is_array($value)) {
+			foreach ($value as $item =>$v) {
                 $value[$item] = self::iconvAll($from_charset, $to_charset, $v);
             }
+        } else {
+            $value = iconv($from_charset, $to_charset, $value);
         }
         return $value;
     }
