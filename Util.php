@@ -87,9 +87,6 @@ class Util
      */
     public static function iconvAll($from_charset, $to_charset, $value)
     {
-        if (!$value) {
-            return false;
-        }
         if (is_array($value)) {
 			foreach ($value as $item =>$v) {
                 $value[$item] = self::iconvAll($from_charset, $to_charset, $v);
