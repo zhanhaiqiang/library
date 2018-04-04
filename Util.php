@@ -35,7 +35,8 @@ class Util
      * @return array|bool|string
      */
     public static function transStrCharset($str, $toCharset = 'UTF-8')
-    {
+    {   
+        if (!$str) return $str;
         $toCharset = strtoupper($toCharset);
         if (is_array($str)) {
             array_walk($str, array('self', "changeStrCharset"), $toCharset);
@@ -61,7 +62,8 @@ class Util
      * @return array|bool|string
      */
     public static function changeStrCharset(&$value, $key, $toCharset = 'UTF-8')
-    {
+    {   
+        if (!$value) return $value;
         if (is_array($value)) {
             array_walk($value, array('self', "changeStrCharset"), $toCharset);
             return $value;
