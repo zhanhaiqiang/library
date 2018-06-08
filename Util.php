@@ -134,7 +134,7 @@ class Util
         } else {
             ImageCopyResized($new_img, $source_img, 0, 0, 0, 0, $new_width, $new_height, $img_width, $img_height);
         }
-        imagedestroy($source_img);
+        
         Header ( "Content-type: $img_type" );
         switch ($img_type){
             case 'image/jpeg':
@@ -150,6 +150,7 @@ class Util
             default:
                 return false;
         }
+		imagedestroy($source_img);
     }
 
     /**
@@ -200,7 +201,7 @@ class Util
         } else {
             ImageCopyResized($new_img, $source_img, 0, 0, 0, 0, $new_width, $new_height, $img_width, $img_height);
         }
-        imagedestroy($source_img);
+        
         Header ( "Content-type: $img_type" );
         switch ($img_type){
             case 'image/jpeg':
@@ -216,6 +217,7 @@ class Util
             default:
                 return false;
         }
+		imagedestroy($source_img);
     }
 
     /**
